@@ -2,17 +2,22 @@
 import requests
 import pprint
 import sys
-def get_settings():
-    settings={}
-    with open('.nanoleaf','r') as confdatei:
-        for line in confdatei.readlines():
-            confdata=line.strip().split(';')
-            data={
-              "ip" : confdata[1],
-              "key" : confdata[2]
-              }
-            settings[confdata[0]]=data
 
+def get_settings():
+    from os.path import expanduser, realpath, join, dirname, isfile
+    possible_location = [expanduser("~"), dirname(realpath(__file__))]
+    settings={}
+    for path in possible_location:
+        config_file=join(path,'.nanoleaf')
+        if isfile(config_file):
+            with open(config_file,'r') as config_file_obj:
+                for line in config_file_obj.readlines():
+                    confdata=line.strip().split(';')
+                    data={
+                      "ip" : confdata[1],
+                      "key" : confdata[2]
+                      }
+                    settings[confdata[0]]=data
     return settings
 
 
