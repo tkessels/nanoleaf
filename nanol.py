@@ -2,7 +2,9 @@
 import requests
 import pprint
 import sys
+from functools import lru_cache
 
+@lru_cache(maxsize=1)
 def get_settings():
     from os.path import expanduser, realpath, join, dirname, isfile
     possible_location = [expanduser("~"), dirname(realpath(__file__))]
@@ -21,20 +23,16 @@ def get_settings():
     return settings
 
 
-settings=get_settings()
-
 
 def get_ip(name):
-    global settings
-    for x in settings:
+    for x in get_settings():
         if x.startswith(name):
-            return settings[x]["ip"]
+            return get_settings()[x]["ip"]
 
 def get_key(name):
-    global settings
-    for x in settings:
+    for x in get_settings():
         if x.startswith(name):
-            return settings[x]["key"]
+            return get_settings()[x]["key"]
 
 def get_url(name):
     return 'http://'+ get_ip(name) +':16021/api/v1/' + get_key(name) + '/'
