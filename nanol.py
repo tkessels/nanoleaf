@@ -63,14 +63,31 @@ def set_state(name,value):
     response=requests.request('PUT',url,headers=headers,data=payload)
     print(response.text)
 
+def get_effects(name):
+    url=get_url(name)+"effects/effectsList"
+    response = requests.request(url=url,method="GET")
+    print(response.text)
+
+def set_effect(name_lamp, name_effect):
+    url = get_url(name_lamp) + 'effects'
+    payload = "{\"select\" : \"" + name_effect + "\"}"
+    headers = { 'Content-Type': 'application/json' }
+    response = requests.request('PUT', url, headers = headers, data = payload)
+    print(response.text)
 
 if __name__ == "__main__":
-    name=sys.argv[1]
-    if is_online(name):
-        if is_on(name):
-            set_state(name,"false")
-        else:
-            set_state(name,"true")
-
+    arguments=sys.argv[1:]
+    if arguments[0]=="-l":
+        get_effects(arguments[1])
+    elif arguments[0]=="-s":
+        set_effect(arguments[1], arguments[2])
     else:
-        print("Offline")
+        name=arguments[0]
+        if is_online(name):
+            if is_on(name):
+                set_state(name,"false")
+            else:
+                set_state(name,"true")
+
+        else:
+            print("Offline")
