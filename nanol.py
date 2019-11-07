@@ -68,10 +68,8 @@ if __name__ == "__main__":
     name=sys.argv[1]
     if is_online(name):
         if is_on(name):
-            print("on")
             set_state(name,"false")
         else:
-            print("off")
             set_state(name,"true")
 
     else:
