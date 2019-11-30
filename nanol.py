@@ -92,18 +92,12 @@ def toggle(name):
         print("Offline")
 
 if __name__ == "__main__":
-    arguments=sys.argv[1:]
-    if arguments[0]=="-l":
-        get_effects(arguments[1])
-    elif arguments[0]=="-s":
-        set_effect(arguments[1], arguments[2])
-    else:
-        name=arguments[0]
-        if is_online(name):
-            if is_on(name):
-                set_state(name,"false")
-            else:
-                set_state(name,"true")
-
+    if len(sys.argv)>1:
+        arguments=sys.argv[1:]
+        if arguments[0]=="-l":
+            get_effects(arguments[1])
+        elif arguments[0]=="-s":
+            set_effect(arguments[1], arguments[2])
         else:
-            print("Offline")
+            name=arguments[0]
+            toggle(name)
