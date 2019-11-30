@@ -45,6 +45,11 @@ def is_online(name):
     except requests.exceptions.ConnectTimeout as e:
         return False
 
+def get_brightness(name):
+    url = get_url(name)+"state/brightness"
+    response = requests.request(url=url,method="GET")
+    print(response.text)
+
 
 def get_infos(name):
     url = get_url(name)
@@ -74,6 +79,17 @@ def set_effect(name_lamp, name_effect):
     headers = { 'Content-Type': 'application/json' }
     response = requests.request('PUT', url, headers = headers, data = payload)
     print(response.text)
+
+def toggle(name):
+    if is_online(name):
+        if is_on(name):
+            print("on")
+            set_state(name,"false")
+        else:
+            print("off")
+            set_state(name,"true")
+    else:
+        print("Offline")
 
 if __name__ == "__main__":
     arguments=sys.argv[1:]
