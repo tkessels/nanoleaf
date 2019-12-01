@@ -45,11 +45,6 @@ def is_online(name):
     except requests.exceptions.ConnectTimeout as e:
         return False
 
-def get_brightness(name):
-    url = get_url(name)+"state/brightness"
-    response = requests.request(url=url,method="GET")
-    print(response.text)
-
 
 def get_infos(name):
     url = get_url(name)
@@ -64,6 +59,24 @@ def is_on(name):
 def set_state(name,value):
     payload = "{\n  \"on\": {\n    \"value\": " + value + "\n  }\n}"
     headers = { 'Content-Type': 'application/json'  }
+    url= get_url(name) + "state"
+    response=requests.request('PUT',url,headers=headers,data=payload)
+    print(response.text)
+
+def get_state(name):
+    url = get_url(name)+"state"
+    response = requests.request(url=url,method="GET")
+    print(response.text)
+
+def get_brightness(name):
+    url = get_url(name)+"state/brightness"
+    response = requests.request(url=url,method="GET")
+    print(response.text)
+
+def set_brightness(name,value,time=2):
+    payload = "{\"brightness\" : {\"value\":"+str(value)+", \"duration\":"+str(time)+"}}"
+    headers = { 'Content-Type': 'application/json'  }
+    # headers = {}
     url= get_url(name) + "state"
     response=requests.request('PUT',url,headers=headers,data=payload)
     print(response.text)
@@ -83,10 +96,8 @@ def set_effect(name_lamp, name_effect):
 def toggle(name):
     if is_online(name):
         if is_on(name):
-            print("on")
             set_state(name,"false")
         else:
-            print("off")
             set_state(name,"true")
     else:
         print("Offline")
@@ -94,10 +105,27 @@ def toggle(name):
 if __name__ == "__main__":
     if len(sys.argv)>1:
         arguments=sys.argv[1:]
-        if arguments[0]=="-l":
-            get_effects(arguments[1])
-        elif arguments[0]=="-s":
-            set_effect(arguments[1], arguments[2])
-        else:
-            name=arguments[0]
-            toggle(name)
+        if arguments[0]=="get":
+            if arguments[1]=="effects":
+                get_effects(arguments[-1])
+            if arguments[1]=="brightness":
+                get_brightness(arguments[-1])
+            if arguments[1]=="state":
+                get_state(arguments[-1])
+        if arguments[0]=="set":
+            if arguments[1]=="effects":
+                name=arguments[2]
+                effect=arguments[3]
+                set_effect(name,effects)
+            if arguments[1]=="brightness":
+                if len(arguments)==4:
+                    name=arguments[2]
+                    brightness=arguments[3]
+                    set_brightness(name,brightness)
+                if len(arguments)==5:
+                    name=arguments[2]
+                    brightness=arguments[3]
+                    duration=arguments[4]
+                    set_brightness(name,brightness,duration)
+        elif len(arguments)==1:
+            toggle(arguments[0])
